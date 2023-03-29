@@ -2,7 +2,7 @@
 timeout = 1000
 
 [relaychain]
-default_command = "./bin/polkadot"
+default_command = "./zombienet/bin/polkadot"
 chain = "rococo-local"
 
   [[relaychain.nodes]]
@@ -21,7 +21,7 @@ cumulus_based = true
 
   [parachains.collator]
   name = "astar"
-  command = "./bin/astar-collator"
+  command = "./zombienet/bin/astar-collator"
   rpc_port = 8545
   args = [ "-l=xcm=trace", "--enable-evm-rpc" ]
 
@@ -32,7 +32,7 @@ cumulus_based = true
 
   [parachains.collator]
   name = "shiden"
-  command = "./bin/astar-collator"
+  command = "./zombienet/bin/astar-collator"
   rpc_port = 8546
   args = [ "-l=xcm=trace", "--enable-evm-rpc" ]
 
