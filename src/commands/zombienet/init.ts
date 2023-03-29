@@ -6,10 +6,12 @@ import { DownloadEndedStats, DownloaderHelper } from "node-downloader-helper";
 import execa = require("execa");
 import inquirer = require("inquirer");
 
-const zombienetConfig = "zombienet.config.toml";
-const templatePath = path.resolve(__dirname, "../../templates");
+export const zombienetConfig = "zombienet.config.toml";
+export const templatePath = path.resolve(__dirname, "../../templates");
 
-export class InitZombienet extends Command {
+export const providerChoices = ["native", "k8s"];
+
+export class InitCommand extends Command {
   static description = "Initialize Zomnienet";
 
   static flags = {
@@ -20,7 +22,7 @@ export class InitZombienet extends Command {
   async run(): Promise<void> {
     ensureSwankyProject();
 
-    const { flags } = await this.parse(InitZombienet);
+    const { flags } = await this.parse(InitCommand);
     await getSwankyConfig();
 
     const spinner = new Spinner(flags.verbose);
@@ -35,16 +37,17 @@ export class InitZombienet extends Command {
       const answer = await inquirer.prompt([{
         name: "provider",
         type: "list",
-        choices: ["native", "k8s"],
+        choices: providerChoices,
         message: "Select a provider to use",
       }])
       provider = answer.provider;
     }
 
+    const configPath = path.resolve(projectPath, "zombienet", "config")
     // Copy templates
     await spinner.runCommand(
       () =>
-        copyTemplateFile(path.resolve(templatePath, provider!), path.resolve(projectPath, "zombienet", provider!)),
+        copyTemplateFile(path.resolve(templatePath, provider!), path.resolve(configPath, provider!)),
       "Copying template files"
     );
 
@@ -78,7 +81,7 @@ export class InitZombienet extends Command {
           reject("Zombienet binary download incomplete");
         }
       
-        await execa.command(`rn ${binPath}/${dlFileDetails.fileName} ${binPath}/zombienet`)
+        await execa.command(`mv ${binPath}/${dlFileDetails.fileName} ${binPath}/zombienet`)
         await execa.command(`chmod +x ${binPath}/zombienet`);
         resolve();
       }),
@@ -89,7 +92,7 @@ export class InitZombienet extends Command {
   }
 }
 
-async function copyTemplateFile(templatePath: string, projectPath: string) {
+export async function copyTemplateFile(templatePath: string, projectPath: string) {
   await ensureDir(projectPath);
   await copy(
     path.resolve(templatePath, zombienetConfig),
