@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "@astar-network/swanky-core": "^2.0.0",
-    "@oclif/core": "^2.7.1",
+    "@oclif/core": "^2.8.2",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.4.3",
     "@types/fs-extra": "^11.0.1",
